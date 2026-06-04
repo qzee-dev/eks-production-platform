@@ -1,0 +1,15 @@
+vpc_cidr_block = "10.0.0.0/16"
+public_subnet_1a_cidr = "10.0.1.0/24"
+public_subnet_1b_cidr = "10.0.2.0/24"
+private_subnet_1a_cidr = "10.0.3.0/24"
+private_subnet_1b_cidr = "10.0.4.0/24"
+zone1= "us-east-1a"
+zone2= "us-east-1b"
+region = "us-east-1"
+eks_cluster_name = "demo-eks-cluster"
+eks_cluster_version = "1.35"
+env = "staging"
+ec2_instance_type = "t3.medium"
+namespace = "kube-system"
+
+
