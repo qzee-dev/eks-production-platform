@@ -42,8 +42,7 @@ resource "aws_eks_cluster" "eks_cluster" {
 
 
     subnet_ids = [
-        aws_subnet.subnet1.id,
-        aws_subnet.subnet2.id,
+        
         aws_subnet.subnet3.id,
         aws_subnet.subnet4.id,  
     ]
