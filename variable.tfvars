@@ -9,7 +9,7 @@ region = "us-east-1"
 eks_cluster_name = "demo-eks-cluster"
 eks_cluster_version = "1.35"
 env = "staging"
-ec2_instance_type = "t3.medium"
+instance_type = "t3.medium"
 namespace = "kube-system"
 
 
