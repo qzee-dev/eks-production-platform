@@ -43,7 +43,7 @@ variable "eks_cluster_name" {
   
 }
 
-variable "ec2_instance_type" {
+variable "instance_type" {
   default = "value for instance_type"
 }
 
