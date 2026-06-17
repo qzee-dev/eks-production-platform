@@ -24,10 +24,6 @@ resource "aws_iam_user_policy" "developer_eks" {
   })
 }
 
-resource "aws_iam_user_policy_attachment" "developer_eks" {
-  user       = aws_iam_user.developer.name
-  policy_arn = aws_iam_user_policy.developer_eks.arn
-}
 
 
 resource "aws_eks_access_entry" "developer" {
