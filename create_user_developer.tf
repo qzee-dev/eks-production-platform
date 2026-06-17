@@ -3,7 +3,7 @@ resource "aws_iam_user" "developer" {
   
 }
 
-resource "aws_iam_user_policy" "developer_eks_policy" {
+resource "aws_iam_user_policy" "developer_eks" {
   name   = "AmazonEKSDeveloperPolicy"
   user   = aws_iam_user.developer.name
 
@@ -24,9 +24,9 @@ resource "aws_iam_user_policy" "developer_eks_policy" {
   })
 }
 
-resource "aws_iam_user_policy_attachment" "developer_eks_policy_attach" {
+resource "aws_iam_user_policy_attachment" "developer_eks" {
   user       = aws_iam_user.developer.name
-  policy_arn = aws_iam_user_policy.developer_eks_policy.arn
+  policy_arn = aws_iam_user_policy.developer_eks.arn
 }
 
 
