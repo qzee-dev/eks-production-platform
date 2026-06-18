@@ -1,5 +1,5 @@
 ===============================================
-#✅ IAM Role
+#✅ IAM Role/ Trust policy  who to assume role
 ====================================================
 
 resource "aws_iam_role" "cluster_autoscaler" {
@@ -23,7 +23,7 @@ resource "aws_iam_role" "cluster_autoscaler" {
 }
 
 =====================================================================
-#✅ IAM Policy
+#✅ IAM Policy /  Permision policy what the role can do after been  assumed
 =====================================================================
 
 resource "aws_iam_policy" "cluster_autoscaler" {
