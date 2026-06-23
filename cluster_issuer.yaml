@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: http-01-production
+spec:
+  acme:
+    email: qzee.rajj@gmail.com   # change this
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: http-o1-production-cluster-issuer-letsencrypt-prod-key
+    solvers:
+      - http01:
+          ingress:
+             ingressClassName: external-nginx
