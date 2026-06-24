@@ -69,3 +69,21 @@ resource "aws_iam_role" "myapp_secrets" {
 
   assume_role_policy = data.aws_iam_policy_document.myapp_secrets.json
 }
+
+resource "aws_iam_policy" "myapp_secrets" {
+  name = "${aws_eks_cluster.eks.name}-myapp-secrets"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = "arn:aws:secretsmanager:<region>:<account-id>:secret:my-secret-kkargS*"
+      }
+    ]
+  })
+}
