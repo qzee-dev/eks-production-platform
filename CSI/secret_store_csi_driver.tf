@@ -87,3 +87,13 @@ resource "aws_iam_policy" "myapp_secrets" {
     ]
   })
 }
+
+
+resource "aws_iam_role_policy_attachment" "myapp_secrets" {
+  policy_arn = aws_iam_policy.myapp_secrets.arn
+  role       = aws_iam_role.myapp_secrets.name
+}
+
+output "myapp_secrets_role_arn" {
+  value = aws_iam_role.myapp_secrets.arn
+}
