@@ -63,3 +63,9 @@ data "aws_iam_policy_document" "my_app_secrets" {
     }
   
 }
+
+resource "aws_iam_role" "myapp_secrets" {
+  name = "${aws_eks_cluster.eks.name}-myapp-secrets"
+
+  assume_role_policy = data.aws_iam_policy_document.myapp_secrets.json
+}
