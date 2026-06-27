@@ -1,3 +1,6 @@
+--------------------------------------------------------------
+It creates an OIDC identity provider in AWS IAM for GitHub Actions
+------------------------------------------------------------------
 module "iam_oidc_provider" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-oidc-provider"
   version = "6.2.1"
