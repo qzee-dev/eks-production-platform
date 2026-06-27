@@ -4,3 +4,5 @@ github_repos = [
   "qzee-dev/frontend-app",
   "qzee-dev/backend-app",
 ]
+
+#we list github repo that need access to Ecr
