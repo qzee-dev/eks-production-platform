@@ -24,6 +24,10 @@ resource "aws_iam_user_policy" "developer_eks" {
   })
 }
 
+resource "aws_iam_user_policy attachement" "developer_eks" { 
+     name: aws_iam_user.developer.name
+     policy_arn: aws_iam_user.developer_eks.arn
+  }
 
 
 resource "aws_eks_access_entry" "developer" {
