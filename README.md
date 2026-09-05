@@ -1,5 +1,7 @@
 #cluster and worker nodes provisioning
+#HPA horizontal pod autoscaller
 #autoscaler /kerpenter provisioning
+#Loadbalancer Aws ALB/NLB
 
 
 
