@@ -1,3 +1,11 @@
+/*
+#to check for latest addon version
+aws eks describe-addon-versions \
+--region us-east-02 \
+--addon-name eks-pod-identity-agent
+
+*/
+
 resource "aws_eks_addon" "pod_identity" {
     cluster_name = aws_eks_cluster.eks_cluster.name
     addon_name   = "eks-pod-identity-agent"
