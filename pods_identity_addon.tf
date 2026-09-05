@@ -4,6 +4,9 @@ aws eks describe-addon-versions \
 --region us-east-02 \
 --addon-name eks-pod-identity-agent
 
+##
+##kubectl get daemonset eks-pod-identity-agent -n kube-system
+
 */
 
 resource "aws_eks_addon" "pod_identity" {
