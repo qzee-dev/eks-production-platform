@@ -18,6 +18,11 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "vpc_id" {
+  description = "VPC ID where the EKS cluster will be created"
+  type        = string
+}
+
 variable "private_subnet_ids" {
   description = "Private subnet IDs for the EKS control plane and worker nodes"
   type        = list(string)
