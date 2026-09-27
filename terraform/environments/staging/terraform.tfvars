@@ -1,0 +1,17 @@
+project_name        = "myapp"
+environment         = "staging"
+region              = "us-east-1"
+owner               = "platform-team"
+vpc_cidr            = "10.20.0.0/16"
+public_subnet_cidrs = ["10.20.1.0/24", "10.20.2.0/24"]
+private_subnet_cidrs = ["10.20.11.0/24", "10.20.12.0/24"]
+availability_zones  = ["us-east-1a", "us-east-1b"]
+cluster_name        = "myapp-staging-eks"
+eks_version         = "1.30"
+cluster_endpoint_public_access = false
+cluster_endpoint_private_access = true
+public_access_cidrs = []
+node_instance_types = ["t3.large"]
+desired_size        = 3
+min_size            = 2
+max_size            = 5

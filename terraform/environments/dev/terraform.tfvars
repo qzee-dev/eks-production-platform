@@ -1,0 +1,17 @@
+project_name        = "myapp"
+environment         = "dev"
+region              = "us-east-1"
+owner               = "platform-team"
+vpc_cidr            = "10.10.0.0/16"
+public_subnet_cidrs = ["10.10.1.0/24", "10.10.2.0/24"]
+private_subnet_cidrs = ["10.10.11.0/24", "10.10.12.0/24"]
+availability_zones  = ["us-east-1a", "us-east-1b"]
+cluster_name        = "myapp-dev-eks"
+eks_version         = "1.30"
+cluster_endpoint_public_access = true
+cluster_endpoint_private_access = true
+public_access_cidrs = ["203.0.113.10/32"]
+node_instance_types = ["t3.medium"]
+desired_size        = 2
+min_size            = 1
+max_size            = 3
