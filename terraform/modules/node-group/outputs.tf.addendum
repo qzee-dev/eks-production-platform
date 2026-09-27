@@ -1,0 +1,4 @@
+output "node_role_id" {
+  description = "IAM role ID for nodes"
+  value       = aws_iam_role.node.id
+}

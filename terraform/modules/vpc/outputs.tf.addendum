@@ -1,0 +1,4 @@
+output "vpc_cidr" {
+  description = "VPC CIDR block"
+  value       = aws_vpc.this.cidr_block
+}
