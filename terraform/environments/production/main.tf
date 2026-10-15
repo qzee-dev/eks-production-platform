@@ -4,6 +4,7 @@ locals {
     Environment = var.environment
     ManagedBy   = "Terraform"
     Owner       = var.owner
+    costcenter  = var.costcenter
   }
 }
 
