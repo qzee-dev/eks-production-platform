@@ -26,6 +26,10 @@ variable "owner" {
   type        = string
   default     = "platform-team"
 }
+ 
+variable "costcenter" {
+
+}
 
 variable "vpc_cidr" {
   description = "VPC CIDR for production environment"
