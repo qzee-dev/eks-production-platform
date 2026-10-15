@@ -8,6 +8,16 @@ variable "environment" {
   type        = string
 }
 
+variable "costcenter" {
+  description = "principal payee we leverage on  charge code"
+  type        = string
+}
+
+variable "owned" {
+  description = "application owner "
+  type        = string
+}
+
 variable "eks_version" {
   description = "Kubernetes version for the EKS cluster"
   type        = string
