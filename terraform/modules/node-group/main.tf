@@ -13,11 +13,10 @@ resource "aws_iam_role" "node" {
   })
 
   tags = merge(
+     local.common_tags,
     {
       Name        = "${var.project_name}-${var.environment}-${var.node_group_name}-role"
-      Project     = var.project_name
-      Environment = var.environment
-      ManagedBy   = "Terraform"
+     
     },
     var.tags
   )
@@ -57,11 +56,9 @@ resource "aws_eks_node_group" "this" {
   labels = var.labels
 
   tags = merge(
+    local.common_tags,
     {
       Name        = "${var.project_name}-${var.environment}-${var.node_group_name}"
-      Project     = var.project_name
-      Environment = var.environment
-      ManagedBy   = "Terraform"
     },
     var.tags
   )
