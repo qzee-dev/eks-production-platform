@@ -26,6 +26,11 @@ variable "owner" {
   type        = string
   default     = "platform-team"
 }
+variable "costcenter" {
+  description = "Project cost center name charge with sourcecode "
+  type        = string
+  default     = "ENG-001"
+}
 
 variable "vpc_cidr" {
   description = "VPC CIDR for dev environment"
