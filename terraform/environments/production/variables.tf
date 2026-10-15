@@ -28,6 +28,9 @@ variable "owner" {
 }
  
 variable "costcenter" {
+ description = "Identifies the team responsible for the cost ownership and tracking of infrastructure resources
+ type = string
+ default = "us-east-1"
 
 }
 
