@@ -27,6 +27,13 @@ variable "owner" {
   default     = "platform-team"
 }
 
+
+variable "costcenter" {
+  description = "Identifies the team responsible for the cost ownership and tracking of infrastructure resources"
+  type        = string
+  default     = "platform-team"
+{
+
 variable "vpc_cidr" {
   description = "VPC CIDR for staging environment"
   type        = string
