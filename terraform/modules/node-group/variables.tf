@@ -13,6 +13,19 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "costcenter" {
+  description = "cloud payee usually charge cost on charge-code"
+  type        = string
+}
+
+
+variable "owner" {
+  description = "application owner"
+  type        = string
+}
+
+
+
 variable "cluster_version" {
   description = "Kubernetes version for the managed node group"
   type        = string
