@@ -13,11 +13,9 @@ resource "aws_iam_role" "cluster" {
   })
 
   tags = merge(
+      local.common_tags,
     {
       Name        = "${var.project_name}-${var.environment}-eks-cluster-role"
-      Project     = var.project_name
-      Environment = var.environment
-      ManagedBy   = "Terraform"
     },
     var.tags
   )
@@ -34,11 +32,10 @@ resource "aws_kms_key" "cluster" {
   enable_key_rotation     = true
 
   tags = merge(
+    local.common_tags,
     {
       Name        = "${var.project_name}-${var.environment}-eks-kms"
-      Project     = var.project_name
-      Environment = var.environment
-      ManagedBy   = "Terraform"
+    
     },
     var.tags
   )
@@ -74,11 +71,10 @@ resource "aws_security_group" "cluster" {
   }
 
   tags = merge(
+      local.common_tags,
     {
       Name        = "${var.project_name}-${var.environment}-eks-cluster-sg"
-      Project     = var.project_name
-      Environment = var.environment
-      ManagedBy   = "Terraform"
+     
     },
     var.tags
   )
@@ -114,12 +110,10 @@ resource "aws_eks_cluster" "this" {
   depends_on = [aws_iam_role_policy_attachment.cluster]
 
   tags = merge(
+    local.common_tags,
     {
       Name        = var.cluster_name
-      Project     = var.project_name
-      Environment = var.environment
-      ManagedBy   = "Terraform"
-    },
+
     var.tags
   )
 }
