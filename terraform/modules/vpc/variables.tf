@@ -43,3 +43,13 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "cost_center" {
+  description = "Cost center responsible for this infrastructure"
+  type        = string
+}
+
+variable "owner" {
+  description = "Team or person responsible for this infrastructure"
+  type        = string
+}
