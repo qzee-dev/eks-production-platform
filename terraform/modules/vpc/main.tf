@@ -15,7 +15,7 @@ resource "aws_vpc" "this" {
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
-    tags = merge(
+  tags = merge(
     local.common_tags,
     {
       Name = "${var.project_name}-${var.environment}-igw"
@@ -34,9 +34,10 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = merge(
-   local.common_tags,
-   {
-      Name        = "${var.project_name}-${var.environment}-public-${count.index + 1}"
+    local.common_tags,
+    {
+      Name                     = "${var.project_name}-${var.environment}-public-${count.index + 1}"
+      "kubernetes.io/role/elb" = "1"
     },
     var.tags
   )
@@ -50,33 +51,34 @@ resource "aws_subnet" "private" {
   availability_zone = var.availability_zones[count.index]
 
   tags = merge(
-     local.common_tags,
+    local.common_tags,
     {
-      Name                              = "${var.project_name}-${var.environment}-private-${count.index + 1}"
-      "kubernetes.io/role/internal-elb" = "1"
-      "kubernetes.io/cluster/${var.project_name}-${var.environment}-eks" = "owned"
+      Name                                        = "${var.project_name}-${var.environment}-private-${count.index + 1}"
+      "kubernetes.io/role/internal-elb"           = "1"
+      "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+      "karpenter.sh/discovery"                    = var.cluster_name
     },
     var.tags
   )
 }
 
 resource "aws_eip" "nat" {
-  count = length(var.public_subnet_cidrs)
+  count = var.single_nat_gateway ? 1 : length(var.public_subnet_cidrs)
 
   domain = "vpc"
 
   tags = merge(
 
-     local.common_tags,
+    local.common_tags,
     {
-      Name        = "${var.project_name}-${var.environment}-nat-eip-${count.index + 1}"
+      Name = "${var.project_name}-${var.environment}-nat-eip-${count.index + 1}"
     },
     var.tags
   )
 }
 
 resource "aws_nat_gateway" "this" {
-  count = length(var.public_subnet_cidrs)
+  count = var.single_nat_gateway ? 1 : length(var.public_subnet_cidrs)
 
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
@@ -84,7 +86,7 @@ resource "aws_nat_gateway" "this" {
   tags = merge(
     local.common_tags,
     {
-      Name        = "${var.project_name}-${var.environment}-nat-${count.index + 1}"
+      Name = "${var.project_name}-${var.environment}-nat-${count.index + 1}"
     },
     var.tags
   )
@@ -101,9 +103,9 @@ resource "aws_route_table" "public" {
   }
 
   tags = merge(
-     local.common_tags,
+    local.common_tags,
     {
-      Name        = "${var.project_name}-${var.environment}-public-rt"
+      Name = "${var.project_name}-${var.environment}-public-rt"
     },
     var.tags
   )
@@ -122,13 +124,13 @@ resource "aws_route_table" "private" {
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.this[count.index].id
+    nat_gateway_id = aws_nat_gateway.this[var.single_nat_gateway ? 0 : count.index].id
   }
 
   tags = merge(
-     local.common_tags,
+    local.common_tags,
     {
-      Name        = "${var.project_name}-${var.environment}-private-rt-${count.index + 1}"
+      Name = "${var.project_name}-${var.environment}-private-rt-${count.index + 1}"
 
     },
     var.tags

@@ -13,9 +13,9 @@ resource "aws_iam_role" "cluster" {
   })
 
   tags = merge(
-      local.common_tags,
+    local.common_tags,
     {
-      Name        = "${var.project_name}-${var.environment}-eks-cluster-role"
+      Name = "${var.project_name}-${var.environment}-eks-cluster-role"
     },
     var.tags
   )
@@ -34,8 +34,8 @@ resource "aws_kms_key" "cluster" {
   tags = merge(
     local.common_tags,
     {
-      Name        = "${var.project_name}-${var.environment}-eks-kms"
-    
+      Name = "${var.project_name}-${var.environment}-eks-kms"
+
     },
     var.tags
   )
@@ -44,6 +44,34 @@ resource "aws_kms_key" "cluster" {
 resource "aws_kms_alias" "cluster" {
   name          = "alias/${var.project_name}-${var.environment}-eks"
   target_key_id = aws_kms_key.cluster.key_id
+}
+
+resource "terraform_data" "validate_access" {
+  input = var.cluster_access_roles
+
+  lifecycle {
+    precondition {
+      condition = alltrue([
+        for role_arn in values(var.cluster_access_roles) :
+        can(regex("^arn:(aws|aws-us-gov|aws-cn):iam::[0-9]{12}:role/.+", role_arn)) &&
+        !strcontains(role_arn, "REPLACE_WITH")
+      ])
+      error_message = "Replace every cluster_access_roles placeholder with a real IAM role ARN."
+    }
+
+    precondition {
+      condition     = length(distinct(values(var.cluster_access_roles))) == length(var.cluster_access_roles)
+      error_message = "Each cluster access role must use a distinct IAM role ARN."
+    }
+
+  }
+}
+
+resource "aws_cloudwatch_log_group" "cluster" {
+  name              = "/aws/eks/${var.cluster_name}/cluster"
+  retention_in_days = var.control_plane_log_retention_days
+
+  tags = merge(local.common_tags, var.tags)
 }
 
 data "aws_vpc" "this" {
@@ -71,10 +99,10 @@ resource "aws_security_group" "cluster" {
   }
 
   tags = merge(
-      local.common_tags,
+    local.common_tags,
     {
-      Name        = "${var.project_name}-${var.environment}-eks-cluster-sg"
-     
+      Name                     = "${var.project_name}-${var.environment}-eks-cluster-sg"
+      "karpenter.sh/discovery" = var.cluster_name
     },
     var.tags
   )
@@ -104,18 +132,82 @@ resource "aws_eks_cluster" "this" {
 
   access_config {
     authentication_mode                         = "API"
-    bootstrap_cluster_creator_admin_permissions = true
+    bootstrap_cluster_creator_admin_permissions = false
   }
 
-  depends_on = [aws_iam_role_policy_attachment.cluster]
+  depends_on = [aws_iam_role_policy_attachment.cluster, aws_cloudwatch_log_group.cluster]
 
   tags = merge(
     local.common_tags,
     {
-      Name        = var.cluster_name
-
+      Name                     = var.cluster_name
+      "karpenter.sh/discovery" = var.cluster_name
+    },
     var.tags
   )
+}
+
+locals {
+  access_entries = {
+    platform_automation = var.cluster_access_roles.platform_automation
+    cluster_admin       = var.cluster_access_roles.cluster_admin
+    devops              = var.cluster_access_roles.devops
+    developer           = var.cluster_access_roles.developer
+    read_only           = var.cluster_access_roles.read_only
+  }
+
+  access_policy_associations = {
+    platform_automation = {
+      principal_arn = var.cluster_access_roles.platform_automation
+      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+      scope         = "cluster"
+      namespaces    = []
+    }
+    cluster_admin = {
+      principal_arn = var.cluster_access_roles.cluster_admin
+      policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+      scope         = "cluster"
+      namespaces    = []
+    }
+  }
+}
+
+resource "aws_eks_access_entry" "team" {
+  for_each = local.access_entries
+
+  cluster_name      = aws_eks_cluster.this.name
+  principal_arn     = each.value
+  type              = "STANDARD"
+  kubernetes_groups = local.access_entry_groups[each.key]
+
+  depends_on = [terraform_data.validate_access]
+
+  tags = merge(local.common_tags, var.tags)
+}
+
+locals {
+  access_entry_groups = {
+    platform_automation = []
+    cluster_admin       = []
+    devops              = ["eks:devops"]
+    developer           = ["eks:developers"]
+    read_only           = ["eks:read-only"]
+  }
+}
+
+resource "aws_eks_access_policy_association" "team" {
+  for_each = local.access_policy_associations
+
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = each.value.principal_arn
+  policy_arn    = each.value.policy_arn
+
+  access_scope {
+    type       = each.value.scope
+    namespaces = each.value.scope == "namespace" ? each.value.namespaces : null
+  }
+
+  depends_on = [aws_eks_access_entry.team]
 }
 
 output "cluster_name" {

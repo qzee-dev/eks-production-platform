@@ -7,13 +7,25 @@ resource "helm_release" "nginx_ingress" {
   namespace        = "ingress-nginx"
   create_namespace = true
 
-  set {
-    name  = "controller.service.type"
-    value = "LoadBalancer"
-  }
+  values = [yamlencode({
+    controller = {
+      replicaCount = 2
+      nodeSelector = {
+        "platform.myapp.io/pool" = "system"
+      }
+      tolerations = [{
+        key      = "CriticalAddonsOnly"
+        operator = "Exists"
+        effect   = "NoSchedule"
+      }]
+      service = {
+        type = "LoadBalancer"
+      }
+      metrics = {
+        enabled = true
+      }
+    }
+  })]
 
-  set {
-    name  = "controller.metrics.enabled"
-    value = "true"
-  }
+  depends_on = [terraform_data.system_node_group_ready]
 }

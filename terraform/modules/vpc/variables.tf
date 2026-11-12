@@ -13,6 +13,11 @@ variable "environment" {
   }
 }
 
+variable "cluster_name" {
+  description = "EKS cluster name used for subnet discovery tags"
+  type        = string
+}
+
 variable "region" {
   description = "AWS region where the EKS cluster will be deployed"
   type        = string
@@ -42,6 +47,12 @@ variable "tags" {
   description = "Additional tags applied to resources"
   type        = map(string)
   default     = {}
+}
+
+variable "single_nat_gateway" {
+  description = "Create one shared NAT gateway instead of one per public subnet"
+  type        = bool
+  default     = false
 }
 
 variable "cost_center" {

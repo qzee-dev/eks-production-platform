@@ -1,0 +1,7 @@
+clusterName: ""
+nodeRole: ""
+amiAlias: ""
+cpuLimit: "64"
+zones: []
+environment: ""
+project: ""

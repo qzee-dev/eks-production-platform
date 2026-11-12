@@ -8,14 +8,31 @@ variable "environment" {
   type        = string
 }
 
-variable "costcenter" {
-  description = "principal payee we leverage on  charge code"
+variable "cost_center" {
+  description = "Cost center responsible for the cluster"
   type        = string
 }
 
-variable "owned" {
-  description = "application owner "
+variable "owner" {
+  description = "Team responsible for the cluster"
   type        = string
+}
+
+variable "cluster_access_roles" {
+  description = "Externally managed IAM role ARNs for cluster access"
+  type = object({
+    platform_automation = string
+    cluster_admin       = string
+    devops              = string
+    developer           = string
+    read_only           = string
+  })
+}
+
+variable "control_plane_log_retention_days" {
+  description = "CloudWatch retention for EKS control-plane logs"
+  type        = number
+  default     = 30
 }
 
 variable "eks_version" {

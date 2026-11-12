@@ -1,0 +1,6 @@
+apiVersion: v2
+name: team-rbac
+description: Namespace-scoped team access and Pod Security Admission defaults
+type: application
+version: 0.1.0
+appVersion: "1"

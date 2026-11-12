@@ -13,8 +13,8 @@ variable "cluster_name" {
   type        = string
 }
 
-variable "costcenter" {
-  description = "cloud payee usually charge cost on charge-code"
+variable "cost_center" {
+  description = "Cost center responsible for this node group"
   type        = string
 }
 

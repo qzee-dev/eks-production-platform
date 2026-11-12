@@ -14,16 +14,15 @@ FAILED=0
 for ENV in dev staging production; do
   echo "[${ENV}] Validating..."
   
-  if cd "terraform/environments/${ENV}" 2>/dev/null; then
-    if terraform validate > /dev/null 2>&1; then
+  if terraform -chdir="terraform/environments/${ENV}" init -backend=false -input=false; then
+    if terraform -chdir="terraform/environments/${ENV}" validate; then
       echo "  ✓ Validation passed"
     else
       echo "  ✗ Validation failed"
       FAILED=$((FAILED + 1))
     fi
-    cd - > /dev/null
   else
-    echo "  ✗ Environment directory not found"
+    echo "  ✗ Initialization failed"
     FAILED=$((FAILED + 1))
   fi
   

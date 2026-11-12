@@ -13,10 +13,10 @@ resource "aws_iam_role" "node" {
   })
 
   tags = merge(
-     local.common_tags,
+    local.common_tags,
     {
-      Name        = "${var.project_name}-${var.environment}-${var.node_group_name}-role"
-     
+      Name = "${var.project_name}-${var.environment}-${var.node_group_name}-role"
+
     },
     var.tags
   )
@@ -31,6 +31,37 @@ resource "aws_iam_role_policy_attachment" "node" {
 
   role       = aws_iam_role.node.name
   policy_arn = each.value
+}
+
+resource "aws_launch_template" "this" {
+  name_prefix = "${var.project_name}-${var.environment}-${var.node_group_name}-"
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+
+    ebs {
+      volume_size           = 50
+      volume_type           = "gp3"
+      encrypted             = true
+      delete_on_termination = true
+    }
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+    tags          = merge(local.common_tags, var.tags)
+  }
+
+  tag_specifications {
+    resource_type = "volume"
+    tags          = merge(local.common_tags, var.tags)
+  }
 }
 
 resource "aws_eks_node_group" "this" {
@@ -53,12 +84,23 @@ resource "aws_eks_node_group" "this" {
     max_unavailable = 1
   }
 
+  launch_template {
+    id      = aws_launch_template.this.id
+    version = tostring(aws_launch_template.this.latest_version)
+  }
+
   labels = var.labels
+
+  taint {
+    key    = "CriticalAddonsOnly"
+    value  = "true"
+    effect = "NO_SCHEDULE"
+  }
 
   tags = merge(
     local.common_tags,
     {
-      Name        = "${var.project_name}-${var.environment}-${var.node_group_name}"
+      Name = "${var.project_name}-${var.environment}-${var.node_group_name}"
     },
     var.tags
   )

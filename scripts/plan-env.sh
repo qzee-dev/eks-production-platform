@@ -6,13 +6,17 @@ set -euo pipefail
 
 ENV=${1:-}
 
-if [ -z "$ENV" ]; then
+case "$ENV" in
+  dev|staging|production) ;;
+  *)
   echo "Usage: $0 [dev|staging|production]"
   exit 1
-fi
+  ;;
+esac
 
-if [ ! -d "terraform/environments/$ENV" ]; then
-  echo "✗ Environment directory not found: terraform/environments/$ENV"
+ENV_DIR="terraform/environments/$ENV"
+if [ ! -f "$ENV_DIR/backend.hcl" ]; then
+  echo "✗ Missing $ENV_DIR/backend.hcl; run init after configuring the backend."
   exit 1
 fi
 
@@ -24,6 +28,7 @@ echo ""
 cd "terraform/environments/$ENV"
 
 echo "[${ENV}] Running terraform plan..."
+terraform init -backend-config=backend.hcl -input=false
 terraform plan \
   -var-file=terraform.tfvars \
   -out="plan.${ENV}"

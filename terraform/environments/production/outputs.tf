@@ -1,3 +1,8 @@
+output "region" {
+  description = "AWS region containing this environment"
+  value       = var.region
+}
+
 output "cluster_name" {
   value = module.eks.cluster_name
 }

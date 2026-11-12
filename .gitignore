@@ -1,5 +1,4 @@
 .terraform/
-.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
 crash.log
@@ -10,12 +9,11 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
-plan.dev
-plan.staging
-plan.prod
+plan.*
+foundation.*
+terraform/environments/*/backend.hcl
 .env
 .envrc
-state-backups/
 .DS_Store
 *.swp
 *.swo
